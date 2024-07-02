@@ -21,18 +21,25 @@ def resize(image, desired_size, flag='image'):
 def load_images_and_masks(data_folder):
     images = {}
     masks = {}
-    
+    brFolder = 0
+    brPara = 0
     for folder_name in os.listdir(data_folder):
+        brFolder+=1
         institution_f = os.path.join(data_folder, folder_name)
         for curr_f in os.listdir(institution_f):
             image_path = os.path.join(institution_f, curr_f)
             if ('mask' not in image_path):
                 mask_path = os.path.join(institution_f, image_path[:-4]+'_mask.tif')
                 if os.path.isfile(image_path) and os.path.isfile(mask_path):
-                    image = resize(Image.open(image_path).convert('RGB'), 1024)
-                    mask = resize(Image.open(mask_path).convert('1'), 1024, 'mask')
-                    images[folder_name] = np.array(image)
-                    masks[folder_name] = np.array(mask)
+                    image = resize(Image.open(image_path).convert('RGB'), 512)
+                    mask = resize(Image.open(mask_path).convert('1'), 512, 'mask')
+                    key = image_path.split('\\')[-1][:-4]
+                    print(key)
+                    images[key] = np.array(image)
+                    masks[key] = np.array(mask)
+                    brPara+=1
+        print(f"Trenutni broj parova img mask: {brPara}")
+    print(f'Br foldera: {brFolder}; br. parova img mask: {brPara}')
     return images, masks
 
 def save_to_pickle(data, filename):
